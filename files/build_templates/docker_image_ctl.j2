@@ -475,6 +475,32 @@ start() {
     fi
     {%- endif %}
 
+    {%- if sonic_asic_platform == "mellanox" %}
+    {%- if docker_container_name == "pmon" %}
+    # Dynamic sensors.conf setup: Create symlink from hw-management to SONiC expected location
+    # This allows pmon container to use the latest sensor configuration from hw-management
+    HW_MGMT_SENSORS_CONF="/var/run/hw-management/config/lm_sensors_config"
+    SONIC_SENSORS_CONF="/usr/share/sonic/device/$PLATFORM/sensors.conf"
+    SONIC_SPECIFIC_SENSORS_CONF="/usr/share/sonic/device/$PLATFORM/sonic_specific_sensors.conf"
+    if [ -e "$HW_MGMT_SENSORS_CONF" ]; then
+        if [ ! -e "$SONIC_SENSORS_CONF" ]; then
+            sudo cp "$HW_MGMT_SENSORS_CONF" "$SONIC_SENSORS_CONF"
+            if [ ! -e "$SONIC_SENSORS_CONF" ]; then
+                echo "Error: Failed to copy sensors.conf file from hw-management, 'sensors' command will print raw sensors data"
+                break
+            fi
+            if [ -e "$SONIC_SPECIFIC_SENSORS_CONF" ]; then
+                if ! sudo sh -c "cat '$SONIC_SPECIFIC_SENSORS_CONF' >> '$SONIC_SENSORS_CONF'"; then
+                    echo "Error: Failed to append SONiC-specific sensors.conf"
+                fi
+            fi
+        fi
+    else
+        echo "Error: sensors.conf file not found in hw-management"
+    fi
+    {%- endif %}
+    {%- endif %}
+
     DOCKERCHECK=`docker inspect --type container ${DOCKERNAME} 2>/dev/null`
     if [ "$?" -eq "0" ]; then
         {%- if docker_container_name == "database" %}
@@ -658,23 +684,6 @@ start() {
         SMARTSWITCH_MNT=" -v /var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket"
     else
         SMARTSWITCH_MNT=""
-    fi
-    # Dynamic sensors.conf setup: Create symlink from hw-management to SONiC expected location
-    # This allows pmon container to use the latest sensor configuration from hw-management
-    HW_MGMT_SENSORS_CONF="/var/run/hw-management/config/lm_sensors_config"
-    SONIC_SENSORS_CONF="/usr/share/sonic/device/$PLATFORM/sensors.conf"
-    SONIC_SPECIFIC_SENSORS_CONF="/usr/share/sonic/device/$PLATFORM/sonic_specific_sensors.conf"
-    if [ -e "$HW_MGMT_SENSORS_CONF" ] && [ ! -e "$SONIC_SENSORS_CONF" ]; then
-        sudo cp "$HW_MGMT_SENSORS_CONF" "$SONIC_SENSORS_CONF"
-        if [ ! -e "$SONIC_SENSORS_CONF" ]; then
-            echo "Error: Failed to copy sensors.conf file from hw-management, 'sensors' command will print raw sensors data"
-            break
-        fi
-        if [ -e "$SONIC_SPECIFIC_SENSORS_CONF" ]; then
-            if ! sudo sh -c "cat '$SONIC_SPECIFIC_SENSORS_CONF' >> '$SONIC_SENSORS_CONF'"; then
-                echo "Error: Failed to append SONiC-specific sensors.conf"
-            fi
-        fi
     fi
 {%- endif %}
 {%- endif %}
