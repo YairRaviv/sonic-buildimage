@@ -194,6 +194,12 @@ module sonic-port{
 					default down;
 				}
 
+				leaf fast_linkup {
+					type boolean;
+					default "false";
+					description "Enable or disable fast link-up on the port";
+				}
+
 				leaf fec {
 					type string {
 						pattern "rs|fc|none|auto";

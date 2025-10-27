@@ -1,0 +1,40 @@
+module sonic-fast-linkup {
+  namespace "urn:sonic-fast-linkup";
+  prefix sfl;
+
+  import sonic-common {
+    prefix scommon;
+  }
+
+  organization "SONiC";
+  contact "SONiC";
+  description
+    "YANG model for SWITCH_FAST_LINKUP global configuration.";
+
+  revision 2025-10-20 {
+    description "Initial revision.";
+  }
+
+  container sonic-fast-linkup {
+    list SWITCH_FAST_LINKUP {
+      key "name";
+      leaf name {
+        type string;
+        description "Key for the SWITCH_FAST_LINKUP table. Use 'GLOBAL'.";
+      }
+      leaf polling_time {
+        type uint16;
+        description "Polling time in seconds";
+      }
+      leaf guard_time {
+        type uint8;
+        description "Guard time in seconds";
+      }
+      leaf ber_threshold {
+        type int8;
+        description "BER threshold exponent (e.g., 12 for 1e-12)";
+      }
+    }
+  }
+}
+
