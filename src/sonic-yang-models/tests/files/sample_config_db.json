@@ -389,6 +389,13 @@
                 "queue_index": "6"
             }
         },
+        "SWITCH_FAST_LINKUP": {
+            "GLOBAL": {
+                "polling_time": "10",
+                "guard_time": "2",
+                "ber_threshold": "12"
+            }
+        },
         "DEVICE_METADATA": {
             "localhost": {
                 "buffer_model": "dynamic",
