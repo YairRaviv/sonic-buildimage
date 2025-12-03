@@ -16,19 +16,6 @@
   limitations under the License.
 -->
 <root>
-    <platform_info type="4800">
-
-        <!-- Device MAC address  -->
-        <device-mac-address>00:02:03:04:05:00</device-mac-address>
-
-        <!-- Number of ports in the following port list -->
-        <number-of-physical-ports>0</number-of-physical-ports>
-
-        <!-- Global port late create -->
-        <late-create-all-ports>1</late-create-all-ports>
-
-        <!-- List of ports in the device -->
-        <ports-list>
-        </ports-list>
-    </platform_info>
+    <!-- Device MAC address -->
+    <device-mac-address>00:02:03:04:05:00</device-mac-address>
 </root>
